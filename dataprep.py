@@ -40,19 +40,39 @@ class osumap():
     WidescreenStoryboard = 0   #0 or 1	Whether or not the storyboard allows widescreen viewing	0
     SamplesMatchPlaybackRate = 0   #0 or 1	Whether or not sound samples will change rate when playing with speed-changing mods
     #[Editor]	Saved settings for the beatmap editor
+    Bookmarks  #Comma-separated list of integers	Time in milliseconds of bookmarks
+    DistanceSpacing  #Decimal	Distance snap multiplier
+    BeatDivisor  #Decimal	Beat snap divisor
+    GridSize  #Integer	Grid size
+    TimelineZoom  #Decimal	Scale factor for the object timeline
     
     #[Metadata]	Information used to identify the beatmap
-    
+    Title = ''   #String	Romanised song title
+    TitleUnicode = ''   #String	Song title
+    Artist = ''   #String	Romanised song artist
+    ArtistUnicode = ''   #String	Song artist
+    Creator = ''   #String	Beatmap creator
+    Version = ''   #String	Difficulty name
+    Source = ''   #String	Original media the song was produced for
+    Tags = ''   #Space-separated list of strings	Search terms
+    BeatmapID = 0    #Integer	Beatmap ID
+    BeatmapSetID = 0    #Integer	Beatmapset ID
     #[Difficulty]	Difficulty settings
+    HPDrainRate = 0    #Decimal	HP setting (0–10)
+    CircleSize = 0    #Decimal	CS setting (0–10)
+    OverallDifficulty = 0    #Decimal	OD setting (0–10)
+    ApproachRate = 0    #Decimal	AR setting (0–10)
+    SliderMultiplier = 0    #Decimal	Base slider velocity in hecto-osu! pixels per beat
+    SliderTickRate = 0    #Decimal	Amount of slider ticks per beat
     
     #[Events]	Beatmap and storyboard graphic events
-    
+    events = []
     #[TimingPoints]	Timing and control points
-    
+    timingpoints = []
     #[Colours]	Combo and skin colours
-    
+    colours = []
     #[HitObjects]
-    
+    hitobjects = []
     def __init__(self):
         """Constructor"""
         
