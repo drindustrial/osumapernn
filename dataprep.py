@@ -110,6 +110,7 @@ class osumap():
             if(cur[:3] == "osu"):
                 self.version = int(cur[-3:-1])
             if(cur == "[General]\n"):
+                for j in range(i+1,len(file)):
                 print("ok")
             if(cur == "[Editor]\n"):
                 print("ok")
@@ -156,3 +157,4 @@ def make_dataset():
 def get_files_list():
     return 0
           
+
