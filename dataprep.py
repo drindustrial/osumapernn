@@ -107,18 +107,104 @@ class osumap():
         for i in range(len(file)):
             cur = file[i]
             print(cur)
-            if(cur[:3] == "osu"):
+            if(cur[:3] == "osu"): #version
                 self.version = int(cur[-3:-1])
             if(cur == "[General]\n"):
                 for j in range(i+1,len(file)):
+                    cur = file[j]
+                    if(cur.count("AudioFilename") > 0):
+                        self.AudioFilename = cur[cur.find(':') + 2:]
+                    if(cur.count("AudioLeadIn") > 0):
+                        self.AudioLeadIn = cur[cur.find(':') + 2:]
+                    if(cur.count("AudioHash") > 0):
+                        self.AudioHash = cur[cur.find(':') + 2:]
+                    if(cur.count("PreviewTime") > 0):
+                        self.PreviewTime = cur[cur.find(':') + 2:]
+                    if(cur.count("Countdown") > 0):
+                        self.Countdown = cur[cur.find(':') + 2:]
+                    if(cur.count("SampleSet") > 0):
+                        self.SampleSet = cur[cur.find(':') + 2:]
+                    if(cur.count("StackLeniency") > 0):
+                        self.StackLeniency = cur[cur.find(':') + 2:]
+                    if(cur.count("Mode") > 0):
+                        self.Mode = cur[cur.find(':') + 2:]
+                    if(cur.count("LetterboxInBreaks") > 0):
+                        self.LetterboxInBreaks = cur[cur.find(':') + 2:]
+                    if(cur.count("StoryFireInFront") > 0):
+                        self.StoryFireInFront = cur[cur.find(':') + 2:]
+                    if(cur.count("UseSkinSprites") > 0):
+                        self.UseSkinSprites = cur[cur.find(':') + 2:]
+                    if(cur.count("AlwaysShowPlayfield") > 0):
+                        self.AlwaysShowPlayfield = cur[cur.find(':') + 2:]
+                    if(cur.count("OverlayPosition") > 0):
+                        self.OverlayPosition = cur[cur.find(':') + 2:]
+                    if(cur.count("SkinPreference") > 0):
+                        self.SkinPreference = cur[cur.find(':') + 2:]
+                    if(cur.count("EpilepsyWarning") > 0):
+                        self.EpilepsyWarning = cur[cur.find(':') + 2:]
+                    if(cur.count("CountdownOffset") > 0):
+                        self.CountdownOffset = cur[cur.find(':') + 2:]
+                    if(cur.count("SpecialStyle") > 0):
+                        self.SpecialStyle = cur[cur.find(':') + 2:]
+                    if(cur.count("WidescreenStoryboard") > 0):
+                        self.WidescreenStoryboard = cur[cur.find(':') + 2:]
+                    if(cur.count("SamplesMatchPlaybackRate") > 0):
+                        self.SamplesMatchPlaybackRate = cur[cur.find(':') + 2:]
                 print("ok")
             if(cur == "[Editor]\n"):
+                for j in range(i+1,len(file)):
+                    cur = file[j]
+                    if(cur.count("Bookmarks") > 0):
+                        self.Bookmarks = cur[cur.find(':') + 2:]
+                    if(cur.count("DistanceSpacing") > 0):
+                        self.DistanceSpacing = cur[cur.find(':') + 2:]
+                    if(cur.count("BeatDivisor") > 0):
+                        self.BeatDivisor = cur[cur.find(':') + 2:]
+                    if(cur.count("GridSize") > 0):
+                        self.GridSize = cur[cur.find(':') + 2:]
+                    if(cur.count("TimelineZoom") > 0):
+                        self.TimelineZoom = cur[cur.find(':') + 2:]
                 print("ok")
             if(cur == "[Metadata]\n"):
+                for j in range(i+1,len(file)):
+                    cur = file[j]
+                    if(cur.count("Title") > 0):
+                        self.Title = cur[cur.find(':') + 2:]
+                    if(cur.count("TitleUnicode") > 0):
+                        self.TitleUnicode = cur[cur.find(':') + 2:]
+                    if(cur.count("Artist") > 0):
+                        self.Artist = cur[cur.find(':') + 2:]
+                    if(cur.count("ArtistUnicode") > 0):
+                        self.ArtistUnicode = cur[cur.find(':') + 2:]
+                    if(cur.count("Version") > 0):
+                        self.Version = cur[cur.find(':') + 2:]
+                    if(cur.count("Source") > 0):
+                        self.Source = cur[cur.find(':') + 2:]
+                    if(cur.count("Tags") > 0):
+                        self.Tags = cur[cur.find(':') + 2:]
+                    if(cur.count("BeatmapID") > 0):
+                        self.BeatmapID = cur[cur.find(':') + 2:]
+                    if(cur.count("BeatmapSetID") > 0):
+                        self.BeatmapSetID = cur[cur.find(':') + 2:]
                 print("ok")
             if(cur == "[Difficulty]\n"):
+                for j in range(i+1,len(file)):
+                    cur = file[j]
+                    if(cur.count("HPDrainRate") > 0):
+                        self.HPDrainRate = cur[cur.find(':') + 2:]
+                    if(cur.count("CircleSize") > 0):
+                        self.CircleSize = cur[cur.find(':') + 2:]
+                    if(cur.count("OverallDifficulty") > 0):
+                        self.OverallDifficulty = cur[cur.find(':') + 2:]
+                    if(cur.count("ApproachRate") > 0):
+                        self.ApproachRate = cur[cur.find(':') + 2:]
+                    if(cur.count("SliderMultiplier") > 0):
+                        self.SliderMultiplier = cur[cur.find(':') + 2:]
+                    if(cur.count("SliderTickRate") > 0):
+                        self.SliderTickRate = cur[cur.find(':') + 2:]
                 print("ok")
             if(cur == "[Events]\n"):
+                
                 print("ok")
             if(cur == "[TimingPoints]\n"):
                 print("ok")
@@ -157,4 +243,3 @@ def make_dataset():
 def get_files_list():
     return 0
           
-
