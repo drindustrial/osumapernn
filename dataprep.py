@@ -21,6 +21,15 @@ class note():
     def printall(self):
         print("key = ", self.key,"time = ", self.time,"length = ",self.length)
     
+class event():
+    eventType = ''
+    startTime = 0
+    eventParams = []
+    def __init__(self,eventType,startTime,eventParams):
+        self.eventType = eventType
+        self.startTime = startTime
+        self.eventParams = eventParams
+        
     
     
 class hitobject():
@@ -204,8 +213,11 @@ class osumap():
                         self.SliderTickRate = cur[cur.find(':') + 2:]
                 print("ok")
             if(cur == "[Events]\n"):
-                
-                print("ok")
+                 for j in range(i+1,len(file)):
+                    cur = file[j]
+                    if(cur.)
+                    self.events.append(event(cur.split(',')[0],cur.split(',')[1],cur.split(',')[2:]))
+     
             if(cur == "[TimingPoints]\n"):
                 print("ok")
             if(cur == "[Colours]\n"):
