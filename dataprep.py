@@ -5,7 +5,6 @@ def read_osu(name):
     for line in f:
         osufile.append(line)
     omap = osumap(osufile)
-    print(osufile[105])
     version = 0
     return 0
 
@@ -22,16 +21,48 @@ class note():
         print("key = ", self.key,"time = ", self.time,"length = ",self.length)
     
 class event():
-    eventType = ''
-    startTime = 0
-    eventParams = []
+    eventType = ''  # (String or Integer): Type of the event. Some events may be referred to by either a name or a number.
+    startTime = 0  # (Integer): Start time of the event, in milliseconds from the beginning of the beatmap's audio. For events that do not use a start time, the default is 0.
+    eventParams = []  # (Comma-separated list): Extra parameters specific to the event's type.
     def __init__(self,eventType,startTime,eventParams):
         self.eventType = eventType
-        self.startTime = startTime
+        self.startTime = int(startTime)
         self.eventParams = eventParams
         
-    
-    
+class timingpoint():
+    time = 0   #(Integer): Start time of the timing section, in milliseconds from the beginning of the beatmap's audio. The end of the timing section is the next timing point's time (or never, if this is the last timing point).
+    beatLength = 0   #beatLength (Decimal): This property has two meanings:
+                                #*For uninherited timing points, the duration of a beat, in milliseconds.
+                                #*For inherited timing points, a negative inverse slider velocity multiplier, as a percentage. For example, -50 would make all sliders in this timing section twice as fast as SliderMultiplier.
+    meter = 0    #(Integer): Amount of beats in a measure. Inherited timing points ignore this property.
+    sampleSet = 0   #(Integer): Default sample set for hit objects (0 = beatmap default, 1 = normal, 2 = soft, 3 = drum).
+    sampleIndex = 0   #(Integer): Custom sample index for hit objects. 0 indicates osu!'s default hitsounds.
+    volume = 0   # Volume percentage for hit objects.
+    uninherited = 0   #(0 or 1): Whether or not the timing point is uninherited.
+    effects = 0   #(Integer): Bit flags that give the timing point extra effects. See the effects section.
+    def __init__(self,time,beatLength,meter,sampleSet,sampleIndex,volume,uninherited,effects):
+        self.time = int(time)
+        self.beatLength = int(beatLength)
+        self.meter = int(meter)
+        self.sampleSet = int(sampleSet)
+        self.sampleIndex = int(sampleIndex)
+        self.volume = int(volume)
+        self.uninherited = int(uninherited)
+        self.effects = int(effects)
+        
+        
+        
+class background():
+    filename = '' #filename (String): Location of the background image relative to the beatmap directory. Double quotes are usually included surrounding the filename, but they are not required.
+    offset_x = 0   #Offset in osu! pixels from the center of the screen. For example, an offset of 50,100 would have the background shown 50 osu! pixels to the right and 100 osu! pixels down from the center of the screen. If the offset is 0,0, writing it is optional.
+    offset_y = 0
+    img = 0
+    def __init__(self,filename,offset_x,offset_y, img):
+        self.filename = filename
+        self.offset_x = int(offset_x)
+        self.offset_y = int(offset_y)
+        self.img = img
+        
 class hitobject():
     x = 0
     y = 0
@@ -94,7 +125,7 @@ class osumap():
     
     #[Difficulty]	Difficulty settings
     HPDrainRate = 0    #Decimal	HP setting (0–10)
-    CircleSize = 0    #Decimal	CS setting (0–10)
+    CircleSize = 4    #Decimal	CS setting (0–10)
     OverallDifficulty = 0    #Decimal	OD setting (0–10)
     ApproachRate = 0    #Decimal	AR setting (0–10)
     SliderMultiplier = 0    #Decimal	Base slider velocity in hecto-osu! pixels per beat
@@ -109,119 +140,145 @@ class osumap():
     #[HitObjects]
     hitobjects = []
     notes = []
-    bpm = 0
+    beatLength = 0
     offset = 0
     version = 0
+    bg = background(0,0,0,0)
+    multibpm = 0
     def __init__(self,file):
         for i in range(len(file)):
             cur = file[i]
-            print(cur)
+            #print(cur)
             if(cur[:3] == "osu"): #version
                 self.version = int(cur[-3:-1])
             if(cur == "[General]\n"):
                 for j in range(i+1,len(file)):
                     cur = file[j]
+                    
                     if(cur.count("AudioFilename") > 0):
-                        self.AudioFilename = cur[cur.find(':') + 2:]
+                        self.AudioFilename = cur[cur.find(':') + 1:]
                     if(cur.count("AudioLeadIn") > 0):
-                        self.AudioLeadIn = cur[cur.find(':') + 2:]
+                        self.AudioLeadIn = cur[cur.find(':') + 1:]
                     if(cur.count("AudioHash") > 0):
-                        self.AudioHash = cur[cur.find(':') + 2:]
+                        self.AudioHash = cur[cur.find(':') + 1:]
                     if(cur.count("PreviewTime") > 0):
-                        self.PreviewTime = cur[cur.find(':') + 2:]
+                        self.PreviewTime = int(cur[cur.find(':') + 1:])
                     if(cur.count("Countdown") > 0):
-                        self.Countdown = cur[cur.find(':') + 2:]
+                        self.Countdown = int(cur[cur.find(':') + 1:])
                     if(cur.count("SampleSet") > 0):
-                        self.SampleSet = cur[cur.find(':') + 2:]
+                        self.SampleSet = cur[cur.find(':') + 1:]
                     if(cur.count("StackLeniency") > 0):
-                        self.StackLeniency = cur[cur.find(':') + 2:]
+                        self.StackLeniency = float(cur[cur.find(':') + 1:])
                     if(cur.count("Mode") > 0):
-                        self.Mode = cur[cur.find(':') + 2:]
+                        self.Mode = int(cur[cur.find(':') + 1:])
                     if(cur.count("LetterboxInBreaks") > 0):
-                        self.LetterboxInBreaks = cur[cur.find(':') + 2:]
+                        self.LetterboxInBreaks = int(cur[cur.find(':') + 1:])
                     if(cur.count("StoryFireInFront") > 0):
-                        self.StoryFireInFront = cur[cur.find(':') + 2:]
+                        self.StoryFireInFront = int(cur[cur.find(':') + 1:])
                     if(cur.count("UseSkinSprites") > 0):
-                        self.UseSkinSprites = cur[cur.find(':') + 2:]
+                        self.UseSkinSprites = int(cur[cur.find(':') + 1:])
                     if(cur.count("AlwaysShowPlayfield") > 0):
-                        self.AlwaysShowPlayfield = cur[cur.find(':') + 2:]
+                        self.AlwaysShowPlayfield = int(cur[cur.find(':') + 1:])
                     if(cur.count("OverlayPosition") > 0):
-                        self.OverlayPosition = cur[cur.find(':') + 2:]
+                        self.OverlayPosition = cur[cur.find(':') + 1:]
                     if(cur.count("SkinPreference") > 0):
-                        self.SkinPreference = cur[cur.find(':') + 2:]
+                        self.SkinPreference = cur[cur.find(':') + 1:]
                     if(cur.count("EpilepsyWarning") > 0):
-                        self.EpilepsyWarning = cur[cur.find(':') + 2:]
+                        self.EpilepsyWarning = int(cur[cur.find(':') + 1:])
                     if(cur.count("CountdownOffset") > 0):
-                        self.CountdownOffset = cur[cur.find(':') + 2:]
+                        self.CountdownOffset = int(cur[cur.find(':') + 1:])
                     if(cur.count("SpecialStyle") > 0):
-                        self.SpecialStyle = cur[cur.find(':') + 2:]
+                        self.SpecialStyle = int(cur[cur.find(':') + 1:])
                     if(cur.count("WidescreenStoryboard") > 0):
-                        self.WidescreenStoryboard = cur[cur.find(':') + 2:]
+                        self.WidescreenStoryboard = int(cur[cur.find(':') + 1:])
                     if(cur.count("SamplesMatchPlaybackRate") > 0):
-                        self.SamplesMatchPlaybackRate = cur[cur.find(':') + 2:]
+                        self.SamplesMatchPlaybackRate = int(cur[cur.find(':') + 1:])
                 print("ok")
             if(cur == "[Editor]\n"):
                 for j in range(i+1,len(file)):
                     cur = file[j]
                     if(cur.count("Bookmarks") > 0):
-                        self.Bookmarks = cur[cur.find(':') + 2:]
+                        self.Bookmarks = cur[cur.find(':') + 1:]
                     if(cur.count("DistanceSpacing") > 0):
-                        self.DistanceSpacing = cur[cur.find(':') + 2:]
+                        self.DistanceSpacing = float(cur[cur.find(':') + 1:])
                     if(cur.count("BeatDivisor") > 0):
-                        self.BeatDivisor = cur[cur.find(':') + 2:]
+                        self.BeatDivisor = float(cur[cur.find(':') + 1:])
                     if(cur.count("GridSize") > 0):
-                        self.GridSize = cur[cur.find(':') + 2:]
+                        self.GridSize = int(cur[cur.find(':') + 1:])
                     if(cur.count("TimelineZoom") > 0):
-                        self.TimelineZoom = cur[cur.find(':') + 2:]
+                        self.TimelineZoom = float(cur[cur.find(':') + 1:])
                 print("ok")
             if(cur == "[Metadata]\n"):
                 for j in range(i+1,len(file)):
                     cur = file[j]
                     if(cur.count("Title") > 0):
-                        self.Title = cur[cur.find(':') + 2:]
+                        self.Title = cur[cur.find(':') + 1:]
                     if(cur.count("TitleUnicode") > 0):
-                        self.TitleUnicode = cur[cur.find(':') + 2:]
+                        self.TitleUnicode = cur[cur.find(':') + 1:]
                     if(cur.count("Artist") > 0):
-                        self.Artist = cur[cur.find(':') + 2:]
+                        self.Artist = cur[cur.find(':') + 1:]
                     if(cur.count("ArtistUnicode") > 0):
-                        self.ArtistUnicode = cur[cur.find(':') + 2:]
+                        self.ArtistUnicode = cur[cur.find(':') + 1:]
                     if(cur.count("Version") > 0):
-                        self.Version = cur[cur.find(':') + 2:]
+                        self.Version = cur[cur.find(':') + 1:]
                     if(cur.count("Source") > 0):
-                        self.Source = cur[cur.find(':') + 2:]
+                        self.Source = cur[cur.find(':') + 1:]
                     if(cur.count("Tags") > 0):
-                        self.Tags = cur[cur.find(':') + 2:]
+                        self.Tags = cur[cur.find(':') + 1:]
                     if(cur.count("BeatmapID") > 0):
-                        self.BeatmapID = cur[cur.find(':') + 2:]
+                        self.BeatmapID = int(cur[cur.find(':') + 1:])
                     if(cur.count("BeatmapSetID") > 0):
-                        self.BeatmapSetID = cur[cur.find(':') + 2:]
+                        self.BeatmapSetID = int(cur[cur.find(':') + 1:])
                 print("ok")
             if(cur == "[Difficulty]\n"):
                 for j in range(i+1,len(file)):
                     cur = file[j]
                     if(cur.count("HPDrainRate") > 0):
-                        self.HPDrainRate = cur[cur.find(':') + 2:]
+                        self.HPDrainRate = float(cur[cur.find(':') + 1:])
                     if(cur.count("CircleSize") > 0):
-                        self.CircleSize = cur[cur.find(':') + 2:]
+                        self.CircleSize = float(cur[cur.find(':') + 1:])
                     if(cur.count("OverallDifficulty") > 0):
-                        self.OverallDifficulty = cur[cur.find(':') + 2:]
+                        self.OverallDifficulty = float(cur[cur.find(':') + 1:])
                     if(cur.count("ApproachRate") > 0):
-                        self.ApproachRate = cur[cur.find(':') + 2:]
+                        self.ApproachRate = float(cur[cur.find(':') + 1:])
                     if(cur.count("SliderMultiplier") > 0):
-                        self.SliderMultiplier = cur[cur.find(':') + 2:]
+                        self.SliderMultiplier = float(cur[cur.find(':') + 1:])
                     if(cur.count("SliderTickRate") > 0):
-                        self.SliderTickRate = cur[cur.find(':') + 2:]
+                        self.SliderTickRate = float(cur[cur.find(':') + 1:])
                 print("ok")
             if(cur == "[Events]\n"):
                  for j in range(i+1,len(file)):
                     cur = file[j]
-                    if(cur.)
-                    self.events.append(event(cur.split(',')[0],cur.split(',')[1],cur.split(',')[2:]))
+                    if((cur[:2] != '//') and (len(cur.split(',')) > 2)):
+                        #print("i'm gonna read it - ", cur)
+                        self.events.append(event(cur.split(',')[0],cur.split(',')[1],cur.split(',')[2:]))
+                        if((cur.split(',')[0] == '0') and (cur.split(',')[1] == '0')):
+                            self.bg = background(cur.split(',')[2],cur.split(',')[3],cur.split(',')[4],0)
+                    if(file[j + 1] == "[TimingPoints]\n"):
+                        break
+                 print(len(self.events)," events")
+                    
+                
+            
      
             if(cur == "[TimingPoints]\n"):
-                print("ok")
+                for j in range(i+1,len(file)):
+                    cur = file[j]
+                    if((cur[:2] != '//') and (len(cur.split(',')) > 7)):
+                        self.timingpoints.append(timingpoint(cur.split(',')[0],
+                                                             cur.split(',')[1],
+                                                             cur.split(',')[2],
+                                                             cur.split(',')[3],
+                                                             cur.split(',')[4],
+                                                             cur.split(',')[5],
+                                                             cur.split(',')[6],
+                                                             cur.split(',')[7],))
+                print(len(self.timingpoints)," timing points")
+                
+                    
+                    
             if(cur == "[Colours]\n"):
-                print("ok")
+                print("mb later")
             if(cur == "[HitObjects]\n"):
                 for j in range(i+1,len(file)):
                     cur = file[j]
@@ -233,9 +290,9 @@ class osumap():
                                     cur.split(',')[5].split(':')[0],
                                     cur.split(',')[5])
                     if(hit.typeo == 128):
-                        n = note(m.floor(hit.x * self.CircleSize / 512),hit.time,hit.endTime - hit.time)
+                        n = note(m.floor((hit.x * self.CircleSize)*(1/512)),hit.time,hit.endTime - hit.time)
                     else:
-                        n = note(m.floor(hit.x * self.CircleSize / 512),hit.time,0)
+                        n = note(m.floor((hit.x * self.CircleSize)*(1/512)),hit.time,0)
                     self.hitobjects.append(hit)
                     self.notes.append(n)
                     n.printall()
