@@ -161,6 +161,7 @@ class osumap():
     multibpm = 0
     def __init__(self,file):
         for i in range(len(file)):
+            maxj = 0
             if (self.Mode != 3):
                 break
             cur = file[i]
@@ -209,7 +210,12 @@ class osumap():
                         self.WidescreenStoryboard = int(cur[cur.find(':') + 1:])
                     if(cur.count("SamplesMatchPlaybackRate") > 0):
                         self.SamplesMatchPlaybackRate = int(cur[cur.find(':') + 1:])
+                    maxj = j
+                    if((file[j + 1] == "[Editor]\n") or (file[j + 1] == "\n")):
+                        break
                 print("ok")
+                i = maxj
+            
             if(cur == "[Editor]\n"):
                 for j in range(i+1,len(file)):
                     cur = file[j]
@@ -223,7 +229,11 @@ class osumap():
                         self.GridSize = int(cur[cur.find(':') + 1:])
                     if(cur.count("TimelineZoom") > 0):
                         self.TimelineZoom = float(cur[cur.find(':') + 1:])
+                    maxj = j
+                    if((file[j + 1] == "[Metadata]\n") or (file[j + 1] == "\n")):
+                        break
                 print("ok")
+                i = maxj
             if(cur == "[Metadata]\n"):
                 for j in range(i+1,len(file)):
                     cur = file[j]
@@ -245,7 +255,11 @@ class osumap():
                         self.BeatmapID = int(cur[cur.find(':') + 1:])
                     if(cur.count("BeatmapSetID") > 0):
                         self.BeatmapSetID = int(cur[cur.find(':') + 1:])
+                    maxj = j
+                    if((file[j + 1] == "[Difficulty]\n") or (file[j + 1] == "\n")):
+                        break
                 print("ok")
+                i = maxj
             if(cur == "[Difficulty]\n"):
                 for j in range(i+1,len(file)):
                     cur = file[j]
@@ -261,9 +275,14 @@ class osumap():
                         self.SliderMultiplier = float(cur[cur.find(':') + 1:])
                     if(cur.count("SliderTickRate") > 0):
                         self.SliderTickRate = float(cur[cur.find(':') + 1:])
+                    maxj = j
+                    if((file[j + 1] == "[Events]\n") or (file[j + 1] == "")):
+                        break
                 print("ok")
+                i = maxj
             if(cur == "[Events]\n"):
-                 for j in range(i+1,len(file)):
+                self.events = []
+                for j in range(i+1,len(file)):
                     cur = file[j]
                     if((cur[:2] != '//') and (len(cur.split(',')) > 2)):
                         #print("i'm gonna read it - ", cur)
@@ -273,14 +292,17 @@ class osumap():
                                 self.bg = background(cur.split(',')[2],cur.split(',')[3],cur.split(',')[4],0)
                             else:
                                 self.bg = background(cur.split(',')[2],0,0,0)
-                    if((file[j + 1] == "[TimingPoints]\n") or (file[j + 1] == "")):
+                    maxj = j
+                    if((file[j + 1] == "[TimingPoints]\n") or (file[j + 1] == "\n")):
                         break
-                 print(len(self.events)," events")
+                print(len(self.events)," events")
+                i = maxj
                     
                 
             
      
             if(cur == "[TimingPoints]\n"):
+                self.timingpoints = []
                 for j in range(i+1,len(file)):
                     cur = file[j]
                     if((cur[:2] != '//') and (len(cur.split(',')) > 7)):
@@ -292,15 +314,18 @@ class osumap():
                                                              cur.split(',')[5],
                                                              cur.split(',')[6],
                                                              cur.split(',')[7],))
-                    if((file[j + 1] == "[Colours]\n") or (file[j + 1] == "[HitObjects]\n") or (file[j + 1] == "")):
+                    maxj = j
+                    if((file[j + 1] == "[Colours]\n") or (file[j + 1] == "[HitObjects]\n") or (file[j + 1] == "\n")):
                         break
                 print(len(self.timingpoints)," timing points")
-                
+                i = maxj
                     
                     
             if(cur == "[Colours]\n"):
                 print("mb later")
             if(cur == "[HitObjects]\n"):
+                self.hitobjects = []
+                self.notes = []
                 for j in range(i+1,len(file)):
                     cur = file[j]
                     hit = hitobject(cur.split(',')[0],
@@ -317,19 +342,8 @@ class osumap():
                     self.hitobjects.append(hit)
                     self.notes.append(n)
                     #n.printall()
+                    maxj = j
+                i = maxj
         
             
         
-
-
-def read_music(name):
-    return 0
-def convert_osu():
-    return 0
-def convert_music():
-    return 0
-def make_dataset():
-    return 0
-def get_files_list():
-    return 0
-          
