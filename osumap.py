@@ -1,11 +1,25 @@
 import math as m
+import io
+import os
+
 def read_osu(name):
-    f = open(name, 'r')
     osufile = []
+    with io.open(name, encoding='utf-8') as file:
+        for line in file:
+            osufile.append(line)
+    '''f = open(name, 'r')
+    
     for line in f:
-        osufile.append(line)
+        osufile.append(line)'''
     omap = osumap(osufile)
     version = 0
+    if (omap.Mode == 3):
+        return 0,omap
+    else:
+        return -1,omap
+
+def write_osu(omap):
+    
     return 0
 
 class note():
@@ -41,8 +55,8 @@ class timingpoint():
     uninherited = 0   #(0 or 1): Whether or not the timing point is uninherited.
     effects = 0   #(Integer): Bit flags that give the timing point extra effects. See the effects section.
     def __init__(self,time,beatLength,meter,sampleSet,sampleIndex,volume,uninherited,effects):
-        self.time = int(time)
-        self.beatLength = int(beatLength)
+        self.time = int(float(time))
+        self.beatLength = float(beatLength)
         self.meter = int(meter)
         self.sampleSet = int(sampleSet)
         self.sampleIndex = int(sampleIndex)
@@ -91,7 +105,7 @@ class osumap():
     Countdown = 0  #Integer	Speed of the countdown before the first hit object (0 = no countdown, 1 = normal, 2 = half, 3 = double)	1
     SampleSet = '' #String	Sample set that will be used if timing points do not override it (Normal, Soft, Drum)	Normal
     StackLeniency = 0   #Decimal	Multiplier for the threshold in time where hit objects placed close together stack (0–1)	0.7
-    Mode = 0   #Integer	Game mode (0 = osu!, 1 = osu!taiko, 2 = osu!catch, 3 = osu!mania)	0
+    Mode = 3   #Integer	Game mode (0 = osu!, 1 = osu!taiko, 2 = osu!catch, 3 = osu!mania)	0
     LetterboxInBreaks = 0   #0 or 1	Whether or not breaks have a letterboxing effect	0
     StoryFireInFront = 0   #0 or 1	Deprecated	1
     UseSkinSprites = 0   #0 or 1	Whether or not the storyboard can use the user's skin images	0
@@ -147,6 +161,8 @@ class osumap():
     multibpm = 0
     def __init__(self,file):
         for i in range(len(file)):
+            if (self.Mode != 3):
+                break
             cur = file[i]
             #print(cur)
             if(cur[:3] == "osu"): #version
@@ -253,8 +269,11 @@ class osumap():
                         #print("i'm gonna read it - ", cur)
                         self.events.append(event(cur.split(',')[0],cur.split(',')[1],cur.split(',')[2:]))
                         if((cur.split(',')[0] == '0') and (cur.split(',')[1] == '0')):
-                            self.bg = background(cur.split(',')[2],cur.split(',')[3],cur.split(',')[4],0)
-                    if(file[j + 1] == "[TimingPoints]\n"):
+                            if(len(cur.split(','))> 3):
+                                self.bg = background(cur.split(',')[2],cur.split(',')[3],cur.split(',')[4],0)
+                            else:
+                                self.bg = background(cur.split(',')[2],0,0,0)
+                    if((file[j + 1] == "[TimingPoints]\n") or (file[j + 1] == "")):
                         break
                  print(len(self.events)," events")
                     
@@ -273,6 +292,8 @@ class osumap():
                                                              cur.split(',')[5],
                                                              cur.split(',')[6],
                                                              cur.split(',')[7],))
+                    if((file[j + 1] == "[Colours]\n") or (file[j + 1] == "[HitObjects]\n") or (file[j + 1] == "")):
+                        break
                 print(len(self.timingpoints)," timing points")
                 
                     
@@ -295,7 +316,7 @@ class osumap():
                         n = note(m.floor((hit.x * self.CircleSize)*(1/512)),hit.time,0)
                     self.hitobjects.append(hit)
                     self.notes.append(n)
-                    n.printall()
+                    #n.printall()
         
             
         
