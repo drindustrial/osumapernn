@@ -8,9 +8,11 @@ for flo in os.listdir():
             result = read_osu(file_path)
             print('read_osu: ',result[0])
             if(result[0] == 0):
-                convert_osu(result[1])
+                result[1].timingpoints[0].time = (result[1].timingpoints[0].time + result[1].timingpoints[0].beatLength * 100) % result[1].timingpoints[0].beatLength
+                binosumap = convert_osu(result[1])
                 print("opening and converting -",result[1].AudioFilename)
-                convert_music(result[1])
+                convert_music(result[1], binosumap.shape[0])
                 
-        break
+                
+        
                 
