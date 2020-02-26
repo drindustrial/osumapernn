@@ -40,7 +40,7 @@ class event():
     eventParams = []  # (Comma-separated list): Extra parameters specific to the event's type.
     def __init__(self,eventType,startTime,eventParams):
         self.eventType = eventType
-        self.startTime = int(startTime)
+        self.startTime = startTime
         self.eventParams = eventParams
         
 class timingpoint():
@@ -173,7 +173,7 @@ class osumap():
                     cur = file[j]
                     
                     if(cur.count("AudioFilename") > 0):
-                        self.AudioFilename = cur[cur.find(':') + 1:]
+                        self.AudioFilename = cur[cur.find(':') + 1:-1].lstrip(' ')
                     if(cur.count("AudioLeadIn") > 0):
                         self.AudioLeadIn = cur[cur.find(':') + 1:]
                     if(cur.count("AudioHash") > 0):
@@ -347,3 +347,4 @@ class osumap():
         
             
         
+
