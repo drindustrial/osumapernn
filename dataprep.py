@@ -1,7 +1,8 @@
-import osumap as om
+from osumap import read_osu, note, event, timingpoint, hitobject, osumap
 import numpy as np
 import h5py as h5
 import pydub
+import math as m 
 from pydub import AudioSegment
 import matplotlib.pyplot as plt
 import pyfftw
@@ -24,12 +25,12 @@ def convert_osu(omap):
         stats = [0, 0]
         for n in omap.notes:
             stats[0] = stats[0] + 1
-            note = n
-            binosumap[time_converter(omap.timingpoints[0].beatLength,division,omap.timingpoints[0].time,10000,t = note.time/1000)[2]][note.key] = 1
-            note.length = m.floor((division * note.length)/omap.timingpoints[0].beatLength)
-            '''while(note.length > 0):
-                binosumap[m.floor(division * note.time/omap.timingpoints[0].beatLength)][note.key] = 1
-                note.length -= 1
+            note1 = n
+            binosumap[time_converter(omap.timingpoints[0].beatLength,division,omap.timingpoints[0].time,10000,t = note1.time/1000)[2]][note1.key] = 1
+            note1.length = m.floor((division * note1.length)/omap.timingpoints[0].beatLength)
+            '''while(note1.length > 0):
+                binosumap[m.floor(division * note1.time/omap.timingpoints[0].beatLength)][note1.key] = 1
+                note1.length -= 1
                 stats[1] += 1'''
         print("notes, lnparts",stats)
         return binosumap
